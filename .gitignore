@@ -1,0 +1,3 @@
+*.o
+demos/ws2801-demo
+demos/cpu-load
