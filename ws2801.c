@@ -57,6 +57,11 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 			return ret;
 	}
 
+	data.values[IDX_CLK] = 0;
+	ret = ioctl(req_fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
+	if (ret == -1)
+		return ret;
+
 	return 0;
 }
 
