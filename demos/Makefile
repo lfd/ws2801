@@ -1,4 +1,4 @@
-DEMOS = ws2801-demo
+DEMOS = ws2801-demo cpu-load
 
 all: $(DEMOS)
 
