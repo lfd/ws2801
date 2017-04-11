@@ -1,3 +1,9 @@
 *.o
+*.cmd
+*.symvers
+*.order
+*.mod.c
+*.ko
+.tmp_versions/
 demos/ws2801-demo
 demos/cpu-load

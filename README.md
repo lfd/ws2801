@@ -1,5 +1,5 @@
-WS2801 Linux driver
-===================
+WS2801 Linux userspace driver
+=============================
 
 Many WS2801 libraries are written in Python or are special embedded libraries
 for Arduinos or AVRs.  This driver is a Linux driver, and support arbitrary
@@ -9,6 +9,15 @@ Userspace driver
 ----------------
 
 The userspace driver uses the gpiolib to access GPIOs.
+
+Kernel driver
+-------------
+
+Optionally, there is also a driver running in kernel mode available.  This
+driver can either be used with the same userland API, or directly be accessed
+via a sysfs interface.
+
+Click [here](kernel/README.md) for more information.
 
 How to write an application
 ---------------------------
@@ -46,5 +55,4 @@ TODOs
 -----
 
   - Implement gamma correction (on driver side).
-  - Implement kernel driver
   - Add more demo code
