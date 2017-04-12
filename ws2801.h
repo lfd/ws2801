@@ -12,18 +12,24 @@
  * the COPYING file in the top-level directory.
  */
 
-struct ws2801;
-
 struct pixel {
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
 };
 
+struct ws2801_driver {
+	int (*update)(struct ws2801_driver *ws);
+
+	int (*set_pixel)(struct ws2801_driver *ws, size_t num,
+			 struct pixel *pixel);
+	int (*set_pixels)(struct ws2801_driver *ws, struct pixel *pixel,
+			  off_t offset, size_t num_pixels);
+
+	int (*free)(struct ws2801_driver *ws);
+
+	void *drv_data;
+};
+
 int ws2801_user_init(size_t num_pixels, const char *device_name, int gpio_clk,
-		     int gpio_do, struct ws2801 **ws2801);
-int ws2801_free(struct ws2801 *ws);
-int ws2801_set_pixel(struct ws2801 *ws, size_t num, struct pixel *pixel);
-int ws2801_update(struct ws2801 *ws);
-int ws2801_set_pixels(struct ws2801 *ws, struct pixel *pixel, off_t offset,
-		      size_t num_pixels);
+		     int gpio_do, struct ws2801_driver *ws);

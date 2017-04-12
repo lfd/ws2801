@@ -115,7 +115,7 @@ int main(void)
 {
 	int err, num, i;
 	double red, green;
-	struct ws2801 *ws;
+	struct ws2801_driver ws;
 	struct cpu_stats stats;
 	double usage;
 
@@ -154,12 +154,12 @@ int main(void)
 			pixels[i].g = green;
 		}
 
-		err = ws2801_set_pixels(ws, pixels, 0, NUM_PIXELS);
+		err = ws.set_pixels(&ws, pixels, 0, NUM_PIXELS);
 		if (err != NUM_PIXELS) {
 			fprintf(stderr, "set pixel\n");
 			break;
 		}
-		err = ws2801_update(ws);
+		err = ws.update(&ws);
 		if (err) {
 			fprintf(stderr, "ws2801: error updating pixels\n");
 			break;
@@ -168,6 +168,6 @@ int main(void)
 		usleep(200000);
 	}
 
-	ws2801_free(ws);
+	ws.free(&ws);
 	return 0;
 }

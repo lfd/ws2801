@@ -28,7 +28,7 @@ static struct pixel pixels[NUM_PIXELS];
 int main(void)
 {
 	int err, i = 0;
-	struct ws2801 *ws;
+	struct ws2801_driver ws;
 
 	err = ws2801_user_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
 	if (err) {
@@ -45,13 +45,13 @@ int main(void)
 
 		i++;
 
-		err = ws2801_set_pixels(ws, pixels, 0, NUM_PIXELS);
-		err = ws2801_update(ws);
+		err = ws.set_pixels(&ws, pixels, 0, NUM_PIXELS);
+		err = ws.update(&ws);
 		if (err)
 			break;
 		usleep(10000);
 	}
 
-	ws2801_free(ws);
+	ws.free(&ws);
 	return 0;
 }
