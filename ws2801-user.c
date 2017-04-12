@@ -31,8 +31,8 @@
 #define INIT_CLEAR_MAX 100
 
 struct ws2801 {
-	size_t num_pixels;
-	struct pixel *pixels;
+	size_t num_leds;
+	struct led *leds;
 	int fd;
 	int req_fd;
 };
@@ -67,8 +67,8 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 
 static int __ws2801_user_free(struct ws2801 *ws)
 {
-	if (ws->pixels)
-		free(ws->pixels);
+	if (ws->leds)
+		free(ws->leds);
 
 	if (ws->fd != -1)
 		close(ws->fd);
@@ -83,15 +83,15 @@ static int ws2801_user_free(struct ws2801_driver *ws_driver)
 	return __ws2801_user_free(ws);
 }
 
-static int ws2801_user_set_pixel(struct ws2801_driver *ws_driver, size_t num,
-				 struct pixel *pixel)
+static int ws2801_user_set_led(struct ws2801_driver *ws_driver, size_t num,
+			       const struct led *led)
 {
 	struct ws2801 *ws = ws_driver->drv_data;
 
-	if (num >= ws->num_pixels)
+	if (num >= ws->num_leds)
 		return -EINVAL;
 
-	ws->pixels[num] = *pixel;
+	ws->leds[num] = *led;
 
 	return 0;
 }
@@ -103,42 +103,40 @@ static int ws2801_user_update(struct ws2801_driver *ws_driver)
 	struct gpiohandle_data data;
 
 
-#define SEND_PIXEL(__color) \
-	ret = ws2801_byte(ws->req_fd, ws->pixels[i].__color); \
+#define SEND_LED(__color) \
+	ret = ws2801_byte(ws->req_fd, ws->leds[i].__color); \
 	if (ret < 0) \
 		return ret;
 
-	for (i = 0; i < ws->num_pixels; i++) {
-		SEND_PIXEL(r);
-		SEND_PIXEL(g);
-		SEND_PIXEL(b);
+	for (i = 0; i < ws->num_leds; i++) {
+		SEND_LED(r);
+		SEND_LED(g);
+		SEND_LED(b);
 	}
 
-	// CHECK: set data to zero?
-
-#undef SEND_PIXEL
+#undef SEND_LED
 
 	return 0;
 }
 
-static int ws2801_user_set_pixels(struct ws2801_driver *ws_driver,
-				  struct pixel *pixel, off_t offset,
-				  size_t num_pixels)
+static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
+				const struct led *leds, off_t offset,
+				size_t num_leds)
 {
 	struct ws2801 *ws = ws_driver->drv_data;
 
-	if (offset >= ws->num_pixels)
+	if (offset >= ws->num_leds)
 		return 0;
 
-	if (num_pixels + offset >= ws->num_pixels)
-		num_pixels = ws->num_pixels - offset;
+	if (num_leds + offset >= ws->num_leds)
+		num_leds = ws->num_leds - offset;
 
-	memcpy(ws->pixels + offset, pixel, num_pixels * sizeof(struct pixel));
+	memcpy(ws->leds + offset, leds, num_leds * sizeof(*leds));
 
-	return num_pixels;
+	return num_leds;
 }
 
-int ws2801_user_init(size_t num_pixels, const char *device_name, int gpio_clk,
+int ws2801_user_init(size_t num_leds, const char *device_name, int gpio_clk,
 		     int gpio_do, struct ws2801_driver *ws_driver)
 {
 	struct ws2801 *ws;
@@ -160,12 +158,12 @@ int ws2801_user_init(size_t num_pixels, const char *device_name, int gpio_clk,
 	}
 	ws->fd = -1;
 
-	ws->pixels = calloc(num_pixels, sizeof(struct pixel));
-	if (!ws->pixels) {
+	ws->leds = calloc(num_leds, sizeof(struct led));
+	if (!ws->leds) {
 		ret = -ENOMEM;
 		goto free_out;
 	}
-	ws->num_pixels = num_pixels;
+	ws->num_leds = num_leds;
 
 	ws->fd = open(chrdev_name, 0);
 	if (ws->fd == -1) {
@@ -194,8 +192,8 @@ int ws2801_user_init(size_t num_pixels, const char *device_name, int gpio_clk,
 	}
 
 	ws_driver->free = ws2801_user_free;
-	ws_driver->set_pixel = ws2801_user_set_pixel;
-	ws_driver->set_pixels = ws2801_user_set_pixels;
+	ws_driver->set_led = ws2801_user_set_led;
+	ws_driver->set_leds = ws2801_user_set_leds;
 	ws_driver->update = ws2801_user_update;
 
 	ws_driver->drv_data = ws;

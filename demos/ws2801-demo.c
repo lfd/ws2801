@@ -23,7 +23,7 @@
 #define GPIO_CLK 160
 #define GPIO_DO 162
 
-static struct pixel pixels[NUM_PIXELS];
+static struct led leds[NUM_PIXELS];
 
 int main(void)
 {
@@ -37,15 +37,15 @@ int main(void)
 	}
 
 	for (;;) {
-		memset(pixels, 0, sizeof(pixels));
+		memset(leds, 0, sizeof(leds));
 
-		pixels[i % NUM_PIXELS].r = 255;
-		pixels[i % NUM_PIXELS].g = 255;
-		pixels[i % NUM_PIXELS].b = 255;
+		leds[i % NUM_PIXELS].r = 255;
+		leds[i % NUM_PIXELS].g = 255;
+		leds[i % NUM_PIXELS].b = 255;
 
 		i++;
 
-		err = ws.set_pixels(&ws, pixels, 0, NUM_PIXELS);
+		err = ws.set_leds(&ws, leds, 0, NUM_PIXELS);
 		err = ws.update(&ws);
 		if (err)
 			break;

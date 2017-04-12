@@ -41,7 +41,7 @@ struct cpu_stats {
 	unsigned long long int steal;
 };
 
-static struct pixel pixels[NUM_PIXELS];
+static struct led leds[NUM_PIXELS];
 
 int get_cpu_stats(struct cpu_stats *stats)
 {
@@ -147,21 +147,21 @@ int main(void)
 
 		num = usage * 10;
 
-		memset(pixels, 0, sizeof(pixels));
+		memset(leds, 0, sizeof(leds));
 
 		for (i = 0; i < num; i++) {
-			pixels[i].r = red;
-			pixels[i].g = green;
+			leds[i].r = red;
+			leds[i].g = green;
 		}
 
-		err = ws.set_pixels(&ws, pixels, 0, NUM_PIXELS);
+		err = ws.set_leds(&ws, leds, 0, NUM_PIXELS);
 		if (err != NUM_PIXELS) {
-			fprintf(stderr, "set pixel\n");
+			fprintf(stderr, "set led\n");
 			break;
 		}
 		err = ws.update(&ws);
 		if (err) {
-			fprintf(stderr, "ws2801: error updating pixels\n");
+			fprintf(stderr, "ws2801: error updating leds\n");
 			break;
 		}
 
