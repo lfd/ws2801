@@ -65,8 +65,8 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 	return 0;
 }
 
-int ws2801_init(size_t num_pixels, const char *device_name, int gpio_clk,
-		int gpio_do, struct ws2801 **ws2801)
+int ws2801_user_init(size_t num_pixels, const char *device_name, int gpio_clk,
+		     int gpio_do, struct ws2801 **ws2801)
 {
 	struct ws2801 *ws;
 	char *chrdev_name;

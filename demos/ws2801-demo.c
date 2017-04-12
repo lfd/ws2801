@@ -30,7 +30,7 @@ int main(void)
 	int err, i = 0;
 	struct ws2801 *ws;
 
-	err = ws2801_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
+	err = ws2801_user_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
 	if (err) {
 		fprintf(stderr, "initialising ws2801: %s\n", strerror(-err));
 		return err;
