@@ -155,7 +155,7 @@ int main(void)
 		}
 
 		err = ws2801_set_pixels(ws, pixels, 0, NUM_PIXELS);
-		if (err) {
+		if (err != NUM_PIXELS) {
 			fprintf(stderr, "set pixel\n");
 			break;
 		}
