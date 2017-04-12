@@ -8,4 +8,4 @@ demos: ws2801.o
 
 clean:
 	$(MAKE) -C demos $@
-	rm *.o
+	rm -f *.o
