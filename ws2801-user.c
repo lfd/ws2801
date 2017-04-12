@@ -30,7 +30,7 @@
 
 #define INIT_CLEAR_MAX 100
 
-struct ws2801 {
+struct ws2801_user {
 	size_t num_leds;
 	struct led *leds;
 	int fd;
@@ -65,7 +65,7 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 	return 0;
 }
 
-static int __ws2801_user_free(struct ws2801 *ws)
+static int __ws2801_user_free(struct ws2801_user *ws)
 {
 	if (ws->leds)
 		free(ws->leds);
@@ -78,7 +78,7 @@ static int __ws2801_user_free(struct ws2801 *ws)
 
 static int ws2801_user_free(struct ws2801_driver *ws_driver)
 {
-	struct ws2801 *ws = ws_driver->drv_data;
+	struct ws2801_user *ws = ws_driver->drv_data;
 
 	return __ws2801_user_free(ws);
 }
@@ -86,7 +86,7 @@ static int ws2801_user_free(struct ws2801_driver *ws_driver)
 static int ws2801_user_set_led(struct ws2801_driver *ws_driver, size_t num,
 			       const struct led *led)
 {
-	struct ws2801 *ws = ws_driver->drv_data;
+	struct ws2801_user *ws = ws_driver->drv_data;
 
 	if (num >= ws->num_leds)
 		return -EINVAL;
@@ -98,7 +98,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver, size_t num,
 
 static int ws2801_user_update(struct ws2801_driver *ws_driver)
 {
-	struct ws2801 *ws = ws_driver->drv_data;
+	struct ws2801_user *ws = ws_driver->drv_data;
 	int i, ret;
 	struct gpiohandle_data data;
 
@@ -123,7 +123,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 				const struct led *leds, off_t offset,
 				size_t num_leds)
 {
-	struct ws2801 *ws = ws_driver->drv_data;
+	struct ws2801_user *ws = ws_driver->drv_data;
 
 	if (offset >= ws->num_leds)
 		return 0;
@@ -139,7 +139,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 int ws2801_user_init(size_t num_leds, const char *device_name, int gpio_clk,
 		     int gpio_do, struct ws2801_driver *ws_driver)
 {
-	struct ws2801 *ws;
+	struct ws2801_user *ws;
 	char *chrdev_name;
 	int i, ret;
 	struct gpiohandle_request req;
@@ -151,7 +151,7 @@ int ws2801_user_init(size_t num_leds, const char *device_name, int gpio_clk,
 	if (ret < 0)
 		return -ENOMEM;
 
-	ws = calloc(1, sizeof(struct ws2801));
+	ws = calloc(1, sizeof(*ws));
 	if (!ws) {
 		ret = -ENOMEM;
 		goto chrdev_name_out;
