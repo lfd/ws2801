@@ -70,3 +70,6 @@ struct ws2801_driver {
 
 int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip,
 		     int gpio_clk, int gpio_do, struct ws2801_driver *ws);
+
+int ws2801_kernel_init(unsigned int num_pixels, const char *device_name,
+		       struct ws2801_driver *ws);
