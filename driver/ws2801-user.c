@@ -142,7 +142,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 	return num_leds;
 }
 
-int ws2801_user_init(unsigned int num_leds, const char *device_name, int gpio_clk,
+int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 		     int gpio_do, struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws;
@@ -153,7 +153,7 @@ int ws2801_user_init(unsigned int num_leds, const char *device_name, int gpio_cl
 	if (!ws_driver || (gpio_clk == gpio_do))
 		return -EINVAL;
 
-	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
+	ret = asprintf(&chrdev_name, "/dev/gpiochip%u", gpiochip);
 	if (ret < 0)
 		return -ENOMEM;
 

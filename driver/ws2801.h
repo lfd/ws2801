@@ -35,5 +35,5 @@ struct ws2801_driver {
 	void *drv_data;
 };
 
-int ws2801_user_init(unsigned int num_leds, const char *device_name,
+int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip,
 		     int gpio_clk, int gpio_do, struct ws2801_driver *ws);
