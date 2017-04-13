@@ -19,6 +19,8 @@ struct led {
 };
 
 struct ws2801_driver {
+	void (*clear)(struct ws2801_driver *ws);
+
 	int (*sync)(struct ws2801_driver *ws);
 
 	int (*set_led)(struct ws2801_driver *ws, unsigned int num,

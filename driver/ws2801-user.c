@@ -119,6 +119,13 @@ static int ws2801_user_sync(struct ws2801_driver *ws_driver)
 	return 0;
 }
 
+static void ws2801_user_clear(struct ws2801_driver *ws_driver)
+{
+	struct ws2801_user *ws = ws_driver->drv_data;
+
+	memset(ws->leds, 0, ws->num_leds * sizeof(*ws->leds));
+}
+
 static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 				const struct led *leds, unsigned int offset,
 				unsigned int num_leds)
@@ -195,6 +202,7 @@ int ws2801_user_init(unsigned int num_leds, const char *device_name, int gpio_cl
 	ws_driver->set_led = ws2801_user_set_led;
 	ws_driver->set_leds = ws2801_user_set_leds;
 	ws_driver->sync = ws2801_user_sync;
+	ws_driver->clear = ws2801_user_clear;
 
 	ws_driver->drv_data = ws;
 
