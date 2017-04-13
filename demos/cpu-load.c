@@ -133,7 +133,7 @@ int app(struct ws2801_driver *ws)
 		led.r = usage * 255;
 		led.g = 255 - led.r;
 
-		num = usage * 10;
+		num = usage * ws->num_leds;
 
 		ws->clear(ws);
 
