@@ -23,12 +23,15 @@
 #define GPIO_CLK 160
 #define GPIO_DO 162
 
-static struct led leds[NUM_PIXELS];
-
 int main(void)
 {
-	int err, i = 0;
+	int err, i;
 	struct ws2801_driver ws;
+	const struct led led = {
+		.r = 255,
+		.g = 255,
+		.b = 255,
+	};
 
 	err = ws2801_user_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
 	if (err) {
@@ -36,22 +39,24 @@ int main(void)
 		return err;
 	}
 
-	for (;;) {
-		memset(leds, 0, sizeof(leds));
+	for (i = 0; ; i++) {
+		ws.clear(&ws);
 
-		leds[i % NUM_PIXELS].r = 255;
-		leds[i % NUM_PIXELS].g = 255;
-		leds[i % NUM_PIXELS].b = 255;
-
-		i++;
-
-		err = ws.set_leds(&ws, leds, 0, NUM_PIXELS);
-		err = ws.sync(&ws);
-		if (err)
+		err = ws.set_led(&ws, i % ws.num_leds, &led);
+		if (err) {
+			fprintf(stderr, "set led\n");
 			break;
+		}
+
+		err = ws.sync(&ws);
+		if (err) {
+			fprintf(stderr, "sync\n");
+			break;
+		}
+
 		usleep(10000);
 	}
 
 	ws.free(&ws);
-	return 0;
+	return err;
 }
