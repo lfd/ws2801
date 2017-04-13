@@ -1,10 +1,12 @@
 DEMOS = ws2801-demo cpu-load
 
+DRIVER_DIR = ../driver
+
 all: $(DEMOS)
 
-CFLAGS += -I../
+CFLAGS += -I$(DRIVER_DIR)
 
-$(DEMOS): ../ws2801.o
+$(DEMOS): $(DRIVER_DIR)/ws2801.o
 
 clean:
 	rm -f *.o

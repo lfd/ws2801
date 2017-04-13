@@ -1,11 +1,13 @@
-.PHONY all: demos
+.PHONY: all clean demos driver
 
-ws2801.o: ws2801-user.o
-	$(LD) -r -o $@ $^
+all: demos
 
-demos: ws2801.o
+demos: driver
+	$(MAKE) -C $@
+
+driver:
 	$(MAKE) -C $@
 
 clean:
+	$(MAKE) -C driver $@
 	$(MAKE) -C demos $@
-	rm -f *.o
