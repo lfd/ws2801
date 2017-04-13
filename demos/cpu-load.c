@@ -159,12 +159,8 @@ int main(void)
 			fprintf(stderr, "set led\n");
 			break;
 		}
-		err = ws.sync(&ws);
-		if (err) {
-			fprintf(stderr, "ws2801: error updating leds\n");
-			break;
-		}
 
+		ws.sync(&ws);
 		usleep(200000);
 	}
 

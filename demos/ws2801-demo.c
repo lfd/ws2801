@@ -48,12 +48,7 @@ int main(void)
 			break;
 		}
 
-		err = ws.sync(&ws);
-		if (err) {
-			fprintf(stderr, "sync\n");
-			break;
-		}
-
+		ws.sync(&ws);
 		usleep(10000);
 	}
 

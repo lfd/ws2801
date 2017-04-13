@@ -96,7 +96,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 	return 0;
 }
 
-static int ws2801_user_sync(struct ws2801_driver *ws_driver)
+static void ws2801_user_sync(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 	int i, ret;
@@ -105,18 +105,17 @@ static int ws2801_user_sync(struct ws2801_driver *ws_driver)
 
 #define SEND_LED(__color) \
 	ret = ws2801_byte(ws->req_fd, ws->leds[i].__color); \
-	if (ret < 0) \
-		return ret;
+	if (ret < 0) { \
+		fprintf(stderr, "ws2801: error during sync\n"); \
+		exit(ret); \
+	}
 
 	for (i = 0; i < ws->num_leds; i++) {
 		SEND_LED(r);
 		SEND_LED(g);
 		SEND_LED(b);
 	}
-
 #undef SEND_LED
-
-	return 0;
 }
 
 static void ws2801_user_clear(struct ws2801_driver *ws_driver)
