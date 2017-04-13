@@ -46,7 +46,7 @@ int main(void)
 		i++;
 
 		err = ws.set_leds(&ws, leds, 0, NUM_PIXELS);
-		err = ws.update(&ws);
+		err = ws.sync(&ws);
 		if (err)
 			break;
 		usleep(10000);
