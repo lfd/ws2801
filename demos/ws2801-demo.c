@@ -15,43 +15,31 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <ws2801.h>
 
-#define NUM_PIXELS 100
-#define DEVICE "gpiochip0"
-#define GPIO_CLK 160
-#define GPIO_DO 162
+#include "common.h"
 
-int main(void)
+int app(struct ws2801_driver *ws)
 {
 	int err, i;
-	struct ws2801_driver ws;
 	const struct led led = {
 		.r = 255,
 		.g = 255,
 		.b = 255,
 	};
 
-	err = ws2801_user_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
-	if (err) {
-		fprintf(stderr, "initialising ws2801: %s\n", strerror(-err));
-		return err;
-	}
-
 	for (i = 0; ; i++) {
-		ws.clear(&ws);
+		ws->clear(ws);
 
-		err = ws.set_led(&ws, i % ws.num_leds, &led);
+		err = ws->set_led(ws, i % ws->num_leds, &led);
 		if (err) {
 			fprintf(stderr, "set led\n");
 			break;
 		}
 
-		ws.sync(&ws);
+		ws->sync(ws);
 		usleep(10000);
 	}
 
-	ws.free(&ws);
 	return err;
 }

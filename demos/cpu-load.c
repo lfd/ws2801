@@ -22,11 +22,6 @@
 
 #include <ws2801.h>
 
-#define NUM_PIXELS 10
-#define DEVICE "gpiochip0"
-#define GPIO_CLK 160
-#define GPIO_DO 162
-
 #define PROCSTATFILE "/proc/stat"
 #define NUM_PARAMS 8
 
@@ -40,8 +35,6 @@ struct cpu_stats {
 	unsigned long long int softirq;
 	unsigned long long int steal;
 };
-
-static struct led leds[NUM_PIXELS];
 
 int get_cpu_stats(struct cpu_stats *stats)
 {
@@ -111,19 +104,14 @@ int get_cpu_usage(struct cpu_stats *stats_prev, double *result)
 	return 0;
 }
 
-int main(void)
+int app(struct ws2801_driver *ws)
 {
 	int err, num, i;
-	double red, green;
-	struct ws2801_driver ws;
 	struct cpu_stats stats;
 	double usage;
+	struct led led;
 
-	err = ws2801_user_init(NUM_PIXELS, DEVICE, GPIO_CLK, GPIO_DO, &ws);
-	if (err) {
-		fprintf(stderr, "initialising ws2801: %s\n", strerror(-err));
-		return err;
-	}
+	led.b = 0;
 
 	err = get_cpu_stats(&stats);
 	if (err)
@@ -142,28 +130,24 @@ int main(void)
 		printf("\r%f ", usage);
 		fflush(stdout);
 
-		red = usage * 255;
-		green = 255 - red;
+		led.r = usage * 255;
+		led.g = 255 - led.r;
 
 		num = usage * 10;
 
-		memset(leds, 0, sizeof(leds));
+		ws->clear(ws);
 
 		for (i = 0; i < num; i++) {
-			leds[i].r = red;
-			leds[i].g = green;
+			err = ws->set_led(ws, i, &led);
+			if (err) {
+				fprintf(stderr, "set led\n");
+				break;
+			}
 		}
 
-		err = ws.set_leds(&ws, leds, 0, NUM_PIXELS);
-		if (err != NUM_PIXELS) {
-			fprintf(stderr, "set led\n");
-			break;
-		}
-
-		ws.sync(&ws);
+		ws->sync(ws);
 		usleep(200000);
 	}
 
-	ws.free(&ws);
 	return 0;
 }
