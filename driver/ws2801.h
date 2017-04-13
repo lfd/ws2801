@@ -21,15 +21,15 @@ struct led {
 struct ws2801_driver {
 	int (*sync)(struct ws2801_driver *ws);
 
-	int (*set_led)(struct ws2801_driver *ws, size_t num,
+	int (*set_led)(struct ws2801_driver *ws, unsigned int num,
 		       const struct led *led);
 	int (*set_leds)(struct ws2801_driver *ws, const struct led *leds,
-			off_t offset, size_t num_leds);
+			unsigned int offset, unsigned int num_leds);
 
 	int (*free)(struct ws2801_driver *ws);
 
 	void *drv_data;
 };
 
-int ws2801_user_init(size_t num_leds, const char *device_name, int gpio_clk,
-		     int gpio_do, struct ws2801_driver *ws);
+int ws2801_user_init(unsigned int num_leds, const char *device_name,
+		     int gpio_clk, int gpio_do, struct ws2801_driver *ws);

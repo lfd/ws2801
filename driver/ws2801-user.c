@@ -31,7 +31,7 @@
 #define INIT_CLEAR_MAX 100
 
 struct ws2801_user {
-	size_t num_leds;
+	unsigned int num_leds;
 	struct led *leds;
 	int fd;
 	int req_fd;
@@ -83,8 +83,8 @@ static int ws2801_user_free(struct ws2801_driver *ws_driver)
 	return __ws2801_user_free(ws);
 }
 
-static int ws2801_user_set_led(struct ws2801_driver *ws_driver, size_t num,
-			       const struct led *led)
+static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
+			       unsigned int num, const struct led *led)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
@@ -120,8 +120,8 @@ static int ws2801_user_sync(struct ws2801_driver *ws_driver)
 }
 
 static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
-				const struct led *leds, off_t offset,
-				size_t num_leds)
+				const struct led *leds, unsigned int offset,
+				unsigned int num_leds)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
@@ -136,7 +136,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 	return num_leds;
 }
 
-int ws2801_user_init(size_t num_leds, const char *device_name, int gpio_clk,
+int ws2801_user_init(unsigned int num_leds, const char *device_name, int gpio_clk,
 		     int gpio_do, struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws;
