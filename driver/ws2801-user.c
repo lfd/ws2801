@@ -198,6 +198,8 @@ int ws2801_user_init(unsigned int num_leds, const char *device_name, int gpio_cl
 
 	ws_driver->drv_data = ws;
 
+	ws_driver->num_leds = ws->num_leds;
+
 	return 0;
 
 free_out:

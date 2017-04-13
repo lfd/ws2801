@@ -28,6 +28,8 @@ struct ws2801_driver {
 
 	int (*free)(struct ws2801_driver *ws);
 
+	unsigned int num_leds;
+
 	void *drv_data;
 };
 
