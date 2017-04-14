@@ -24,7 +24,7 @@
 #define DEFAULT_NUM_LEDS 20
 #define DEFAULT_GPIOCHIP 0
 
-void __attribute__((noreturn)) usage(int exit_code)
+static void __attribute__((noreturn)) usage(int exit_code)
 {
 	FILE *s;
 

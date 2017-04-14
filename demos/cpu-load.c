@@ -36,7 +36,7 @@ struct cpu_stats {
 	unsigned long long int steal;
 };
 
-int get_cpu_stats(struct cpu_stats *stats)
+static int get_cpu_stats(struct cpu_stats *stats)
 {
 	char buffer[256];
 	int err = -1;
@@ -84,7 +84,7 @@ static unsigned long long int inline sum_idle(struct cpu_stats *stats)
 	return stats->idle + stats->iowait;
 }
 
-int get_cpu_usage(struct cpu_stats *stats_prev, double *result)
+static int get_cpu_usage(struct cpu_stats *stats_prev, double *result)
 {
 	unsigned long long int delta_idle, delta_usage;
 	struct cpu_stats stats_curr;
