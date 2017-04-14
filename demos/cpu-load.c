@@ -47,7 +47,7 @@ static int get_cpu_stats(struct cpu_stats *stats)
 	if (file == NULL)
 		return -1;
 
-	if (fgets(buffer, sizeof(buffer), file) == NULL) 
+	if (fgets(buffer, sizeof(buffer), file) == NULL)
 	{
 		fprintf(stderr, "fgets");
 		goto out;
