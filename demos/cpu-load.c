@@ -74,13 +74,13 @@ out:
 
 }
 
-static unsigned long long int inline sum_usage(struct cpu_stats *stats)
+static inline unsigned long long int sum_usage(struct cpu_stats *stats)
 {
 	return stats->user + stats->nice + stats->system +
 		stats->irq + stats->softirq + stats->steal;
 }
 
-static unsigned long long int inline sum_idle(struct cpu_stats *stats)
+static inline unsigned long long int sum_idle(struct cpu_stats *stats)
 {
 	return stats->idle + stats->iowait;
 }
