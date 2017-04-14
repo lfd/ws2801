@@ -65,7 +65,7 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 	return 0;
 }
 
-static int __ws2801_user_free(struct ws2801_user *ws)
+static void __ws2801_user_free(struct ws2801_user *ws)
 {
 	if (ws->leds)
 		free(ws->leds);
@@ -76,7 +76,7 @@ static int __ws2801_user_free(struct ws2801_user *ws)
 	free(ws);
 }
 
-static int ws2801_user_free(struct ws2801_driver *ws_driver)
+static void ws2801_user_free(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 

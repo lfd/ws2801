@@ -28,7 +28,7 @@ struct ws2801_driver {
 	int (*set_leds)(struct ws2801_driver *ws, const struct led *leds,
 			unsigned int offset, unsigned int num_leds);
 
-	int (*free)(struct ws2801_driver *ws);
+	void (*free)(struct ws2801_driver *ws);
 
 	unsigned int num_leds;
 
