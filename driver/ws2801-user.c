@@ -80,7 +80,7 @@ static void ws2801_user_free(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
-	return __ws2801_user_free(ws);
+	__ws2801_user_free(ws);
 }
 
 static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
