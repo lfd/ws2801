@@ -100,8 +100,6 @@ static void ws2801_user_sync(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 	int i, ret;
-	struct gpiohandle_data data;
-
 
 #define SEND_LED(__color) \
 	ret = ws2801_byte(ws->req_fd, ws->leds[i].__color); \
