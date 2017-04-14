@@ -19,8 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-
 #include <ws2801.h>
+
+#include "common.h"
 
 #define PROCSTATFILE "/proc/stat"
 #define NUM_PARAMS 8
