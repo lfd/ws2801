@@ -64,7 +64,7 @@ static inline int ws2801_byte(int req_fd, unsigned char byte)
 	return 0;
 }
 
-static void __ws2801_user_free(struct ws2801_user *ws)
+static inline void __ws2801_user_free(struct ws2801_user *ws)
 {
 	if (ws->leds)
 		free(ws->leds);
