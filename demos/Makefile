@@ -5,6 +5,7 @@ DRIVER_DIR = ../driver
 all: $(DEMOS)
 
 CFLAGS += -I$(DRIVER_DIR)
+LDFLAGS = -pthread
 
 $(DEMOS): $(DRIVER_DIR)/ws2801.o common.o
 

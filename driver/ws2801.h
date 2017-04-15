@@ -12,6 +12,11 @@
  * the COPYING file in the top-level directory.
  */
 
+#include <stdbool.h>
+
+#define WS2801_DEFAULT_REFRESH_RATE 5000
+#define WS2801_DEFAULT_AUTO_COMMIT false
+
 struct led {
 	unsigned char r;
 	unsigned char g;
@@ -19,6 +24,16 @@ struct led {
 };
 
 struct ws2801_driver {
+	/* The refresh rate (in ms) forces the driver to commit changes to the
+	 * LED strip after a certain timeout, if no other changes were made.
+	 *
+	 * Returns 0 on success, and negative values in error cases.
+	 */
+	int (*set_refresh_rate)(struct ws2801_driver *ws, unsigned int refresh_rate_ms);
+
+	/* Automatically commit any change immediately */
+	void (*set_auto_commit)(struct ws2801_driver *ws, bool auto_commit);
+
 	/* Set all LEDs to RGB (0, 0, 0) */
 	void (*clear)(struct ws2801_driver *ws);
 
