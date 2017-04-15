@@ -31,7 +31,6 @@
 #define INIT_CLEAR_MAX 100
 
 struct ws2801_user {
-	unsigned int num_leds;
 	struct led *leds;
 	int fd;
 	int req_fd;
@@ -88,7 +87,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
-	if (num >= ws->num_leds)
+	if (num >= ws_driver->num_leds)
 		return -EINVAL;
 
 	ws->leds[num] = *led;
@@ -109,7 +108,7 @@ static void ws2801_user_sync(struct ws2801_driver *ws_driver)
 		exit(err); \
 	}
 
-	for (i = 0; i < ws->num_leds; i++) {
+	for (i = 0; i < ws_driver->num_leds; i++) {
 		SEND_LED(r);
 		SEND_LED(g);
 		SEND_LED(b);
@@ -121,7 +120,7 @@ static void ws2801_user_clear(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
-	memset(ws->leds, 0, ws->num_leds * sizeof(*ws->leds));
+	memset(ws->leds, 0, ws_driver->num_leds * sizeof(*ws->leds));
 }
 
 static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
@@ -130,11 +129,11 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
-	if (offset >= ws->num_leds)
+	if (offset >= ws_driver->num_leds)
 		return 0;
 
-	if (num_leds + offset >= ws->num_leds)
-		num_leds = ws->num_leds - offset;
+	if (num_leds + offset >= ws_driver->num_leds)
+		num_leds = ws_driver->num_leds - offset;
 
 	memcpy(ws->leds + offset, leds, num_leds * sizeof(*leds));
 
@@ -168,7 +167,6 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 		ret = -ENOMEM;
 		goto free_out;
 	}
-	ws->num_leds = num_leds;
 
 	ws->fd = open(chrdev_name, 0);
 	if (ws->fd == -1) {
@@ -202,9 +200,8 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	ws_driver->sync = ws2801_user_sync;
 	ws_driver->clear = ws2801_user_clear;
 
+	ws_driver->num_leds = num_leds;
 	ws_driver->drv_data = ws;
-
-	ws_driver->num_leds = ws->num_leds;
 
 	return 0;
 
