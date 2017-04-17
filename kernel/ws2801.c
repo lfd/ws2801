@@ -83,6 +83,7 @@ static inline void ws2801_send_led(struct ws2801 *ws, const struct led *led)
 static inline void ws2801_set_latch(struct ws2801 *ws)
 {
 	gpiod_set_value(ws->clk, 0);
+	udelay(1000);
 }
 
 static int ws2801_set_led(struct ws2801 *ws, size_t no, struct led *led)
@@ -113,7 +114,6 @@ static void ws2801_commit(struct ws2801 *ws, const struct led *leds,
 		ws2801_send_led(ws, leds + i);
 
 	ws2801_set_latch(ws);
-	udelay(1000);
 	mutex_unlock(&ws->commit_lock);
 }
 
