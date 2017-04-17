@@ -1,4 +1,4 @@
-DEMOS = ws2801-demo cpu-load
+DEMOS = ws2801-demo cpu-load rgb-demo
 
 DRIVER_DIR = ../driver
 
