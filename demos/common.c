@@ -12,6 +12,7 @@
 
 #include <errno.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -33,7 +34,8 @@ static void __attribute__((noreturn)) usage(int exit_code)
 	else
 		s = stdout;
 
-	fprintf(s, "Usage: { -c CLK_GPIO_ID } { -d DATA_GPIO_ID }\n"
+	fprintf(s, "Usage: { { -c CLK_GPIO_ID } { -d DATA_GPIO_ID } |"
+		   " { -k DEVICE_NAME }\n"
 		   "       [ -n NUM_LEDS (20) ]\n"
 		   "       [ -g CHIP_ID (0) ]\n"
 		   "       [ -h ]\n");
@@ -43,16 +45,17 @@ static void __attribute__((noreturn)) usage(int exit_code)
 
 int main(int argc, char **argv)
 {
-	int err;
-	int option;
 	struct ws2801_driver ws;
 	int clock = -1, data = -1;
 	unsigned int chip = DEFAULT_GPIOCHIP;
 	unsigned int num_leds = DEFAULT_NUM_LEDS;
+	bool kernel_mode = false;
+	const char *device_name;
+	int option, err;
 
 	option = 0;
 
-	while ((option = getopt(argc, argv, "c:d:n:g:h")) != -1) {
+	while ((option = getopt(argc, argv, "c:d:n:g:k:h")) != -1) {
 		switch (option) {
 			case 'c':
 				clock = atoi(optarg);
@@ -66,15 +69,24 @@ int main(int argc, char **argv)
 			case 'g':
 				chip = atoi(optarg);
 				break;
+			case 'k':
+				kernel_mode = true;
+				device_name = optarg;
+				break;
 			default:
 				usage(-1);
 		}
 	}
 
-	if (clock == -1 || data == -1)
-		usage(-EINVAL);
 
-	err = ws2801_user_init(num_leds, chip, clock, data, &ws);
+	if (kernel_mode) {
+		err = ws2801_kernel_init(num_leds, device_name, &ws);
+	} else {
+		if (clock == -1 || data == -1)
+			usage(-EINVAL);
+		err = ws2801_user_init(num_leds, chip, clock, data, &ws);
+	}
+
 	if (err) {
 		fprintf(stderr, "initialising ws2801: %s\n", strerror(-err));
 		return err;
