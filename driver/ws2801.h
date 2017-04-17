@@ -23,7 +23,7 @@ struct ws2801_driver {
 	void (*clear)(struct ws2801_driver *ws);
 
 	/* Commit all pending changes to the hardware */
-	void (*sync)(struct ws2801_driver *ws);
+	void (*commit)(struct ws2801_driver *ws);
 
 	/* Sets one single LED
 	 *

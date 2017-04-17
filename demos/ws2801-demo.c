@@ -37,7 +37,7 @@ int app(struct ws2801_driver *ws)
 			break;
 		}
 
-		ws->sync(ws);
+		ws->commit(ws);
 		usleep(10000);
 	}
 

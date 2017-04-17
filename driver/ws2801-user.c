@@ -95,7 +95,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 	return 0;
 }
 
-static void ws2801_user_sync(struct ws2801_driver *ws_driver)
+static void ws2801_user_commit(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 	unsigned int i;
@@ -104,7 +104,7 @@ static void ws2801_user_sync(struct ws2801_driver *ws_driver)
 #define SEND_LED(__color) \
 	err = ws2801_byte(ws->req_fd, ws->leds[i].__color); \
 	if (err < 0) { \
-		fprintf(stderr, "ws2801: error during sync\n"); \
+		fprintf(stderr, "ws2801: error during commit\n"); \
 		exit(err); \
 	}
 
@@ -197,7 +197,7 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	ws_driver->free = ws2801_user_free;
 	ws_driver->set_led = ws2801_user_set_led;
 	ws_driver->set_leds = ws2801_user_set_leds;
-	ws_driver->sync = ws2801_user_sync;
+	ws_driver->commit = ws2801_user_commit;
 	ws_driver->clear = ws2801_user_clear;
 
 	ws_driver->num_leds = num_leds;
