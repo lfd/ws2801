@@ -182,7 +182,6 @@ static void *ws2801_refresh_task(void *data)
 
 unlock_out:
 	pthread_mutex_unlock(&ws->data_lock);
-out:
 	return (void*)(long)err;
 }
 
