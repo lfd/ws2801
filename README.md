@@ -51,6 +51,27 @@ in the root directory.  Run the demo:
 This tells the demo that your LED stripe is equipped with 40 LEDs, the clock
 line is located at GPIO 21 and the data line at GPIO 22.
 
+
+To compile kernel drivers, just type
+
+    cd kernel
+    make
+
+The kernel driver can be loaded with
+
+    insmod ws2801.ko
+
+After having defined your device in your board's device-tree, you can run the same demo:
+
+    ./demos/ws2801-demo -k led-stripe
+
+This tells the demo to use the ws2801 kernel device "led-stripe".
+
+Device-Tree Overlays
+--------------------
+
+TBD. Explain that the kernel driver requires appropriate device-tree entries.
+
 TODOs
 -----
 
