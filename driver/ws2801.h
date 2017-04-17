@@ -19,19 +19,33 @@ struct led {
 };
 
 struct ws2801_driver {
+	/* Set all LEDs to RGB (0, 0, 0) */
 	void (*clear)(struct ws2801_driver *ws);
 
+	/* Commit all pending changes to the hardware */
 	void (*sync)(struct ws2801_driver *ws);
 
+	/* Sets one single LED
+	 *
+	 * Returns 0 on success, and negative values in error cases.
+	 */
 	int (*set_led)(struct ws2801_driver *ws, unsigned int num,
 		       const struct led *led);
+
+	/* Set a range of LEDs
+	 *
+	 * Returns 0 on success, and negative values in error cases.
+	 */
 	int (*set_leds)(struct ws2801_driver *ws, const struct led *leds,
 			unsigned int offset, unsigned int num_leds);
 
+	/* Free the driver structure */
 	void (*free)(struct ws2801_driver *ws);
 
+	/* Holds the number of LEDs. Do not write access! */
 	unsigned int num_leds;
 
+	/* Private driver data structure. Do not access! */
 	void *drv_data;
 };
 
