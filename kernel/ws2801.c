@@ -16,6 +16,7 @@
 #include <linux/of_gpio.h>
 #include <linux/gpio/consumer.h>
 #include <linux/platform_device.h>
+#include <linux/regulator/consumer.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
 #include <linux/kthread.h>
@@ -42,6 +43,7 @@ struct led {
 struct ws2801 {
 	struct kobject kobj;
 	struct device *dev;
+	struct regulator *regulator;
 	struct mutex data_lock;
 	struct mutex commit_lock;
 	struct task_struct *refresh_task;
@@ -494,6 +496,9 @@ static int ws2801_remove(struct platform_device *pdev)
 	ws2801_init_clear(ws);
 	mutex_unlock(&ws->data_lock);
 
+	if (!IS_ERR(ws->regulator))
+		err = regulator_disable(ws->regulator);
+
 	return err;
 }
 
@@ -533,6 +538,14 @@ static int ws2801_probe(struct platform_device *pdev)
 	if (!ws->leds)
 		return -ENOMEM;
 
+	ws->regulator = devm_regulator_get_optional(dev, "target-5v");
+	if (IS_ERR(ws->regulator)) {
+		err = PTR_ERR(ws->regulator);
+		if (err != -ENODEV)
+			return err;
+		dev_info(dev, "no regulator found\n");
+	}
+
 	ws->clk = devm_gpiod_get(dev, "clk", GPIOD_OUT_LOW);
 	if (IS_ERR(ws->clk)) {
 		dev_err(dev, "error getting clk: %ld", PTR_ERR(ws->clk));
@@ -553,6 +566,12 @@ static int ws2801_probe(struct platform_device *pdev)
 				   ws->name);
 	if (err)
 		return err;
+
+	if (!IS_ERR(ws->regulator)) {
+			err = regulator_enable(ws->regulator);
+			if (err)
+				return err;
+	}
 
 	ws2801_init_clear(ws);
 
