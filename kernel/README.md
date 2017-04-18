@@ -58,6 +58,15 @@ Example:
     echo -en "10 255 0 255\n11 255 0 0\n" > set
     echo > sync
 
+### set_raw
+Allows to fill all LEDs at once with binary data. Useful for libraries.
+
+Example:
+
+    echo 2 > num_leds
+    echo -en "\xff\xff\xff\x0\x0\x0" > set_raw
+    echo > commit
+
 ### full_on
 Sets all LEDs at once to a specified RGB value.
 

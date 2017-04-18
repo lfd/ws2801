@@ -405,6 +405,38 @@ static ssize_t set_store(struct kobject *kobj, struct kobj_attribute *attr,
 	return err;
 }
 
+ATTR_SHOW_EINVAL(set_raw);
+
+static ssize_t set_raw_store(struct kobject *kobj, struct kobj_attribute *attr,
+			     const char *buf, size_t len)
+{
+	struct ws2801 *ws = container_of(kobj, struct ws2801, kobj);
+	int err, i;
+
+	struct __attribute__((packed)) led *led = (void*)buf;
+	struct led *dst;
+
+	mutex_lock(&ws->data_lock);
+	dst = ws->leds;
+
+	if (len != ws->num_leds * 3 * sizeof(unsigned char)) {
+		err = -ERANGE;
+		goto unlock_out;
+	}
+
+	for (i = 0; i < ws->num_leds; i++, led++, dst++) {
+		dst->r = led->r;
+		dst->g = led->g;
+		dst->b = led->b;
+	}
+
+	err = len;
+
+unlock_out:
+	mutex_unlock(&ws->data_lock);
+	return err;
+}
+
 ATTR_SHOW_EINVAL(commit);
 
 static ssize_t commit_store(struct kobject *kobj, struct kobj_attribute *attr,
@@ -426,6 +458,7 @@ static struct kobj_attribute full_on_attr = __ATTR_RW(full_on);
 static struct kobj_attribute num_leds_attr = __ATTR_RW(num_leds);
 static struct kobj_attribute refresh_rate_attr = __ATTR_RW(refresh_rate);
 static struct kobj_attribute set_attr = __ATTR_RW(set);
+static struct kobj_attribute set_raw_attr = __ATTR_RW(set_raw);
 
 static struct attribute *ws2801_per_device_attrs[] = {
 	&auto_commit_attr.attr,
@@ -435,6 +468,7 @@ static struct attribute *ws2801_per_device_attrs[] = {
 	&num_leds_attr.attr,
 	&refresh_rate_attr.attr,
 	&set_attr.attr,
+	&set_raw_attr.attr,
 	NULL
 };
 
