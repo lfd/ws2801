@@ -139,7 +139,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 			       unsigned int num, const struct led *led)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
-	int err;
+	int err = 0;
 
 	pthread_mutex_lock(&ws->data_lock);
 	if (num >= ws_driver->num_leds) {
