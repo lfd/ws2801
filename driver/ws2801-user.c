@@ -40,7 +40,6 @@ struct ws2801_user {
 
 	bool auto_commit;
 	volatile unsigned int refresh_rate;
-	struct led *leds;
 
 	int fd;
 	int req_fd;
@@ -111,7 +110,7 @@ static void ws2801_user_commit(struct ws2801_driver *ws_driver)
 	pthread_mutex_lock(&ws->commit_lock);
 
 #define SEND_LED(__color) \
-	err = ws2801_byte(ws->req_fd, ws->leds[i].__color); \
+	err = ws2801_byte(ws->req_fd, ws_driver->leds[i].__color); \
 	if (err < 0) { \
 		fprintf(stderr, "ws2801: error during commit\n"); \
 		exit(err); \
@@ -147,7 +146,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 		goto unlock_out;
 	}
 
-	ws->leds[num] = *led;
+	ws_driver->leds[num] = *led;
 
 	if (ws->auto_commit)
 		ws2801_user_commit(ws_driver);
@@ -226,7 +225,8 @@ static void ws2801_user_clear(struct ws2801_driver *ws_driver)
 	struct ws2801_user *ws = ws_driver->drv_data;
 
 	pthread_mutex_lock(&ws->data_lock);
-	memset(ws->leds, 0, ws_driver->num_leds * sizeof(*ws->leds));
+	memset(ws_driver->leds, 0,
+	       ws_driver->num_leds * sizeof(*ws_driver->leds));
 	pthread_mutex_unlock(&ws->data_lock);
 
 	if (ws->auto_commit)
@@ -247,7 +247,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 	if (num_leds + offset >= ws_driver->num_leds)
 		num_leds = ws_driver->num_leds - offset;
 
-	memcpy(ws->leds + offset, leds, num_leds * sizeof(*leds));
+	memcpy(ws_driver->leds + offset, leds, num_leds * sizeof(*leds));
 
 	pthread_mutex_unlock(&ws->data_lock);
 
@@ -265,21 +265,6 @@ static void ws2801_user_set_auto_commit(struct ws2801_driver *ws_driver,
 	ws->auto_commit = auto_commit;
 }
 
-static inline void __ws2801_user_free(struct ws2801_user *ws)
-{
-	pthread_mutex_destroy(&ws->data_lock);
-	pthread_mutex_destroy(&ws->commit_lock);
-	pthread_cond_destroy(&ws->cond);
-
-	if (ws->leds)
-		free(ws->leds);
-
-	if (ws->fd != -1)
-		close(ws->fd);
-
-	free(ws);
-}
-
 static void ws2801_user_free(struct ws2801_driver *ws_driver)
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
@@ -291,7 +276,17 @@ static void ws2801_user_free(struct ws2801_driver *ws_driver)
 		exit(-err);
 	}
 
-	__ws2801_user_free(ws);
+	if (ws_driver->leds)
+		free(ws_driver->leds);
+
+	pthread_mutex_destroy(&ws->data_lock);
+	pthread_mutex_destroy(&ws->commit_lock);
+	pthread_cond_destroy(&ws->cond);
+
+	if (ws->fd != -1)
+		close(ws->fd);
+
+	free(ws);
 }
 
 int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
@@ -315,6 +310,7 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 		goto chrdev_name_out;
 	}
 	ws->fd = -1;
+	ws_driver->drv_data = ws;
 
 	ret = pthread_mutex_init(&ws->data_lock, NULL);
 	if (ret)
@@ -328,8 +324,8 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	if (ret)
 		goto free_commit_lock_out;
 
-	ws->leds = calloc(num_leds, sizeof(struct led));
-	if (!ws->leds) {
+	ws_driver->leds = calloc(num_leds, sizeof(struct led));
+	if (!ws_driver->leds) {
 		ret = -ENOMEM;
 		goto free_out;
 	}
@@ -369,7 +365,6 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	ws_driver->free = ws2801_user_free;
 
 	ws_driver->num_leds = num_leds;
-	ws_driver->drv_data = ws;
 
 	ret = ws2801_user_set_refresh_rate(ws_driver,
 					   WS2801_DEFAULT_REFRESH_RATE);
@@ -381,7 +376,7 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	return 0;
 
 free_out:
-	__ws2801_user_free(ws);
+	ws2801_user_free(ws_driver);
 	free(chrdev_name);
 
 	return ret;
