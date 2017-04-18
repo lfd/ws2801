@@ -38,7 +38,6 @@ struct ws2801_user {
 	pthread_mutex_t data_lock;
 	pthread_t refresh_task;
 
-	bool auto_commit;
 	volatile unsigned int refresh_rate;
 
 	int fd;
@@ -148,7 +147,7 @@ static int ws2801_user_set_led(struct ws2801_driver *ws_driver,
 
 	ws_driver->leds[num] = *led;
 
-	if (ws->auto_commit)
+	if (ws_driver->auto_commit)
 		ws2801_user_commit(ws_driver);
 
 unlock_out:
@@ -229,7 +228,7 @@ static void ws2801_user_clear(struct ws2801_driver *ws_driver)
 	       ws_driver->num_leds * sizeof(*ws_driver->leds));
 	pthread_mutex_unlock(&ws->data_lock);
 
-	if (ws->auto_commit)
+	if (ws_driver->auto_commit)
 		ws2801_user_commit(ws_driver);
 }
 
@@ -251,7 +250,7 @@ static int ws2801_user_set_leds(struct ws2801_driver *ws_driver,
 
 	pthread_mutex_unlock(&ws->data_lock);
 
-	if (ws->auto_commit)
+	if (ws_driver->auto_commit)
 		ws2801_user_commit(ws_driver);
 
 	return num_leds;
@@ -262,7 +261,7 @@ static void ws2801_user_set_auto_commit(struct ws2801_driver *ws_driver,
 {
 	struct ws2801_user *ws = ws_driver->drv_data;
 
-	ws->auto_commit = auto_commit;
+	ws_driver->auto_commit = auto_commit;
 }
 
 static void ws2801_user_free(struct ws2801_driver *ws_driver)

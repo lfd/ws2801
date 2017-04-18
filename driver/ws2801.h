@@ -60,6 +60,7 @@ struct ws2801_driver {
 	/* Holds the number of LEDs. Do not write access! */
 	unsigned int num_leds;
 	struct led *leds;
+	bool auto_commit;
 
 	/* Private driver data structure. Do not access! */
 	void *drv_data;
