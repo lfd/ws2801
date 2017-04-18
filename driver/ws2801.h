@@ -12,6 +12,7 @@
  * the COPYING file in the top-level directory.
  */
 
+#include <pthread.h>
 #include <stdbool.h>
 
 #define WS2801_DEFAULT_REFRESH_RATE 5000
@@ -61,6 +62,7 @@ struct ws2801_driver {
 	unsigned int num_leds;
 	struct led *leds;
 	bool auto_commit;
+	pthread_mutex_t data_lock;
 
 	/* Private driver data structure. Do not access! */
 	void *drv_data;
