@@ -16,4 +16,8 @@ clean:
 	$(MAKE) -C demos $@
 	$(MAKE) -C kernel $@
 
+install:
+	$(MAKE) -C driver $@
+	$(MAKE) -C demos $@
+
 .PHONY: all clean demos driver modules modules_install

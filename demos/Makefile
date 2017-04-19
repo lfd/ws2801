@@ -11,6 +11,9 @@ LDFLAGS = -pthread
 
 $(DEMOS): $(DRIVER_DIR)/ws2801.o common.o
 
+install: $(DEMOS) $(PREFIX_BIN)
+	$(INSTALL) -D $^
+
 clean:
 	rm -f *.o
 	rm -f $(DEMOS)
