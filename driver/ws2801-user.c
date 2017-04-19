@@ -288,8 +288,6 @@ int ws2801_user_init(unsigned int num_leds, unsigned int gpiochip, int gpio_clk,
 	ws_driver->commit = ws2801_user_commit;
 	ws_driver->free = ws2801_user_free;
 
-	ws2801_set_auto_commit(ws_driver, false);
-
 	ret = ws2801_user_set_refresh_rate(ws_driver,
 					   WS2801_DEFAULT_REFRESH_RATE);
 	if (ret) {

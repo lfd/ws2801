@@ -38,6 +38,8 @@ int ws2801_init(struct ws2801_driver *ws_driver, unsigned int num_leds)
 		return err;
 	}
 
+	ws2801_set_auto_commit(ws_driver, WS2801_DEFAULT_AUTO_COMMIT);
+
 	return 0;
 }
 
