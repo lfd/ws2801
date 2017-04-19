@@ -1,8 +1,6 @@
-export CFLAGS += -Wall -Wstrict-prototypes -Wtype-limits \
-		 -Wmissing-declarations -Wmissing-prototypes
-export CFLAGS += -O2
-
 all: demos
+
+include include.mk
 
 demos: driver
 	$(MAKE) -C $@

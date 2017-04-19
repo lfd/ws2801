@@ -4,6 +4,8 @@ DRIVER_DIR = ../driver
 
 all: $(DEMOS)
 
+include ../include.mk
+
 CFLAGS += -I$(DRIVER_DIR)
 LDFLAGS = -pthread
 
