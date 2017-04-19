@@ -1,10 +1,16 @@
-obj-m += ws2801.o
+KDIR ?= /lib/modules/`uname -r`/build
+kbuild = -C $(KDIR) M=$$PWD $@
+kmake = $(Q)$(MAKE) $(kbuild)
 
-ccflags-y += -Wall -Wstrict-prototypes -Wtype-limits -Wmissing-declarations \
+all: modules
+
+obj-m := ws2801.o
+
+ccflags-y := -Wall -Wstrict-prototypes -Wtype-limits -Wmissing-declarations \
 	     -Wmissing-prototypes
 
-all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+clean modules:
+	$(kmake)
 
-clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+modules_install: modules
+	$(kmake)
