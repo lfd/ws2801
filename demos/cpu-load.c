@@ -107,7 +107,7 @@ static int get_cpu_usage(struct cpu_stats *stats_prev, double *result)
 
 int app(struct ws2801_driver *ws)
 {
-	int err, num, i;
+	int err, i;
 	struct cpu_stats stats;
 	double usage;
 	struct led led;
@@ -134,11 +134,9 @@ int app(struct ws2801_driver *ws)
 		led.r = usage * 255;
 		led.g = 255 - led.r;
 
-		num = usage * ws->num_leds;
-
 		ws->clear(ws);
 
-		for (i = 0; i < num; i++) {
+		for (i = 0; i < ws->num_leds; i++) {
 			err = ws->set_led(ws, i, &led);
 			if (err) {
 				fprintf(stderr, "set led\n");
