@@ -55,6 +55,12 @@ struct ws2801_driver {
 	int (*set_leds)(struct ws2801_driver *ws, const struct led *leds,
 			unsigned int offset, unsigned int num_leds);
 
+	/* Set all LEDs to a specific color, without commit
+	 *
+	 * Returns 0 on success, and negative values in error cases.
+	 */
+	int (*full_on)(struct ws2801_driver *ws, const struct led *color);
+
 	/* Free the driver structure */
 	void (*free)(struct ws2801_driver *ws);
 

@@ -25,3 +25,5 @@ int ws2801_set_led(struct ws2801_driver *ws_driver, unsigned int num,
 
 int ws2801_set_leds(struct ws2801_driver *ws_driver, const struct led *leds,
 		    unsigned int offset, unsigned int num_leds);
+
+int ws2801_full_on(struct ws2801_driver *ws_driver, const struct led *color);

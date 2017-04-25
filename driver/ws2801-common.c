@@ -102,3 +102,17 @@ int ws2801_set_leds(struct ws2801_driver *ws_driver, const struct led *leds,
 
 	return num_leds;
 }
+
+int ws2801_full_on(struct ws2801_driver *ws_driver, const struct led *color)
+{
+	unsigned int i;
+	int err;
+
+	for (i = 0; i < ws_driver->num_leds; i++) {
+		err = ws_driver->set_led(ws_driver, i, color);
+		if (err)
+			break;
+	}
+
+	return err;
+}

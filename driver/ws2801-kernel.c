@@ -172,6 +172,7 @@ int ws2801_kernel_init(unsigned int num_leds, const char *device_name,
 	ws_driver->set_refresh_rate = ws2801_kernel_set_refresh_rate;
 	ws_driver->set_led = ws2801_set_led;
 	ws_driver->set_leds = ws2801_set_leds;
+	ws_driver->full_on = ws2801_full_on;
 	ws_driver->free = ws2801_kernel_free;
 
 	return 0;
