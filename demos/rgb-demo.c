@@ -1,7 +1,7 @@
 /*
  * ws2801 - WS2801 LED driver running in Linux userspace
  *
- * Copyright (c) - Ralf Ramsauer, 2017
+ * Copyright (c) - Ralf Ramsauer, 2021
  *
  * Authors:
  *   Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
@@ -15,9 +15,8 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <ws2801.h>
 
-#include "common.h"
+#include "ws2801.h"
 
 static void get_next(struct led *led)
 {
@@ -26,7 +25,7 @@ static void get_next(struct led *led)
 	led->b += 10;
 }
 
-int app(struct ws2801_driver *ws)
+int app(struct ws *ws)
 {
 	int err, i;
 	struct led first, next;
@@ -38,13 +37,13 @@ int app(struct ws2801_driver *ws)
 	for (;;) {
 		next = first;
 		for (i = 0; i < ws->num_leds; i++) {
-			err = ws->set_led(ws, i, &next);
+			err = ws_set_led(ws, i, &next);
 			if (err)
 				return err;
 			get_next(&next);
 		}
 
-		ws->commit(ws);
+		ws_commit(ws);
 		usleep(30000);
 		get_next(&first);
 	}

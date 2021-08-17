@@ -12,22 +12,9 @@ all: demos
 
 include include.mk
 
-demos: driver
+demos:
 	$(MAKE) -C $@
-
-driver:
-	$(MAKE) -C $@
-
-modules modules_install:
-	$(MAKE) -C kernel $@
 
 clean:
-	$(MAKE) -C driver $@
 	$(MAKE) -C demos $@
-	$(MAKE) -C kernel $@
-
-install:
-	$(MAKE) -C driver $@
-	$(MAKE) -C demos $@
-
-.PHONY: all clean demos driver modules modules_install
+	$(MAKE) -C kernel_v2 $@

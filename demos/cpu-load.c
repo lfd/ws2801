@@ -19,9 +19,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <ws2801.h>
 
-#include "common.h"
+#include "ws2801.h"
 
 #define PROCSTATFILE "/proc/stat"
 #define NUM_PARAMS 8
@@ -105,7 +104,7 @@ static int get_cpu_usage(struct cpu_stats *stats_prev, double *result)
 	return 0;
 }
 
-int app(struct ws2801_driver *ws)
+int app(struct ws *ws)
 {
 	int err;
 	struct cpu_stats stats;
@@ -134,10 +133,10 @@ int app(struct ws2801_driver *ws)
 		led.r = usage * 255;
 		led.g = 255 - led.r;
 
-		err = ws->full_on(ws, &led);
+		ws_full_on(ws, &led);
+		err = ws_commit(ws);
 		if (err)
 			break;
-		ws->commit(ws);
 		usleep(200000);
 	}
 

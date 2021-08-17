@@ -7,3 +7,4 @@
 .tmp_versions/
 demos/ws2801-demo
 demos/cpu-load
+demos/rgb-demo
