@@ -18,6 +18,16 @@
 
 static struct device *ws2801_dev;
 
+static int ws2801_probe(struct platform_device *pdev)
+{
+	return -1;
+}
+
+static int ws2801_remove(struct platform_device *pdev)
+{
+	return 0;
+}
+
 static const struct of_device_id of_ws2801_match[] = {
 	{
 		.compatible = DRIVER_NAME,
@@ -28,6 +38,8 @@ static const struct of_device_id of_ws2801_match[] = {
 MODULE_DEVICE_TABLE(of, of_ws2801_match);
 
 static struct platform_driver ws2801_driver = {
+	.probe = ws2801_probe,
+	.remove = ws2801_remove,
 	.driver = {
 		.name = DRIVER_NAME,
 		.of_match_table = of_ws2801_match,
