@@ -17,17 +17,34 @@
 
 static struct device *ws2801_dev;
 
+static struct platform_driver ws2801_driver = {
+	.driver = {
+		.name = DRIVER_NAME,
+	},
+};
+
 static int __init ws2801_module_init(void)
 {
+	int err;
+
 	ws2801_dev = root_device_register(DRIVER_NAME);
 	if (IS_ERR(ws2801_dev))
 		return PTR_ERR(ws2801_dev);
 
+	err = platform_driver_register(&ws2801_driver);
+	if (err)
+		goto dev_out;
+
 	return 0;
+
+dev_out:
+	root_device_unregister(ws2801_dev);
+	return err;
 }
 
 static void __exit ws2801_module_exit(void)
 {
+	platform_driver_unregister(&ws2801_driver);
 	root_device_unregister(ws2801_dev);
 }
 
