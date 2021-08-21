@@ -11,14 +11,24 @@
  */
 
 #include <linux/module.h>
+#include <linux/platform_device.h>
+
+#define DRIVER_NAME	"ws2801"
+
+static struct device *ws2801_dev;
 
 static int __init ws2801_module_init(void)
 {
-	return -1;
+	ws2801_dev = root_device_register(DRIVER_NAME);
+	if (IS_ERR(ws2801_dev))
+		return PTR_ERR(ws2801_dev);
+
+	return 0;
 }
 
 static void __exit ws2801_module_exit(void)
 {
+	root_device_unregister(ws2801_dev);
 }
 
 module_init(ws2801_module_init);
