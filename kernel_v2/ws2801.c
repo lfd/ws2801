@@ -29,6 +29,17 @@ struct ws2801 {
 
 static struct device *ws2801_dev;
 
+static ssize_t ws2801_write(struct file *fp, const char __user *ubuf,
+			    size_t cnt, loff_t *ppos)
+{
+	return cnt;
+}
+
+static const struct file_operations ws2801_fops = {
+	.owner = THIS_MODULE,
+	.write = &ws2801_write,
+};
+
 static int ws2801_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -56,7 +67,7 @@ static int ws2801_probe(struct platform_device *pdev)
 
 	ws->misc_dev.minor = MISC_DYNAMIC_MINOR;
 	ws->misc_dev.name = ws->name;
-	ws->misc_dev.fops = NULL;
+	ws->misc_dev.fops = &ws2801_fops;
 
 	err = misc_register(&ws->misc_dev);
 
