@@ -4,6 +4,9 @@
 *.order
 *.mod.c
 *.ko
+*.dtb
+*.tmp
+*.mod
 .tmp_versions/
 demos/ws2801-demo
 demos/cpu-load
